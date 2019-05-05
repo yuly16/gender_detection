@@ -27,7 +27,7 @@ class MFCC_dataset(Dataset):  # 需要继承data.Dataset
         # 3. Return a data pair (e.g. image and label).
         # 这里需要注意的是，第一步：read one data，是一个data
         mfcc_file, gender = self.mfcc2gender[index]
-        return torch.from_numpy(np.load(mfcc_file)[:59995]), torch.Tensor([self.gender2id[gender]]).long()
+        return torch.from_numpy(np.load(mfcc_file)).transpose(1,0), torch.Tensor([self.gender2id[gender]]).long()
     def __len__(self):
         # You should change 0 to the total size of your dataset.
         return len(self.mfcc2gender)

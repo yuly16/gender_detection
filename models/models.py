@@ -1,6 +1,6 @@
 import torch
 from torch import nn
-from torch.functional import F
+from torch.nn.functional import softmax
 class X_vector(nn.Module):
 	def __init__(self):
 		super(X_vector,self).__init__()
@@ -9,7 +9,7 @@ class X_vector(nn.Module):
 			TDNN(node_num[0],node_num[1],3,2),
 			TDNN(node_num[1],node_num[2],3,3),
 			TDNN(node_num[2],node_num[3],1,1),
-			TDNN(node_num[3],node_num[4],1,1),)
+			TDNN(node_num[3],node_num[4],1,1))
 		self.sts_pooling = statistic_pooling()
 		self.fc1 = nn.Sequential(fc(node_num[4]*2,node_num[5]),fc(node_num[5],node_num[6]))
 		self.fc2 = nn.Linear(node_num[6], 2)
@@ -17,7 +17,7 @@ class X_vector(nn.Module):
 		x = self.TDNN(x)
 		x = self.sts_pooling(x)
 		x = self.fc1(x)
-		x = F.softmax(self.fc2(x))
+		x = softmax(self.fc2(x))
 		return x
 
 class TDNN(nn.Module):

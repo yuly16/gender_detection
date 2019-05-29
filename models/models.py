@@ -4,15 +4,13 @@ from torch.nn.functional import softmax
 class X_vector(nn.Module):
 	def __init__(self):
 		super(X_vector,self).__init__()
-		node_num = [256,256,256,256,512,1024,512,256]
+		node_num = [256,512,1024,512,256]
 		self.TDNN = nn.Sequential(TDNN(20,node_num[0],5,1),
 			TDNN(node_num[0],node_num[1],3,2),
-			TDNN(node_num[1],node_num[2],3,3),
-			TDNN(node_num[2],node_num[3],1,1),
-			TDNN(node_num[3],node_num[4],1,1))
+			TDNN(node_num[1],node_num[2],3,3),)
 		self.sts_pooling = statistic_pooling()
-		self.fc1 = nn.Sequential(fc(node_num[4]*2,node_num[5]),fc(node_num[5],node_num[6]))
-		self.fc2 = nn.Linear(node_num[6], 2)
+		self.fc1 = nn.Sequential(fc(node_num[2]*2,node_num[3]),fc(node_num[3],node_num[4]))
+		self.fc2 = nn.Linear(node_num[4], 2)
 	def forward(self,x):
 		x = self.TDNN(x)
 		x = self.sts_pooling(x)

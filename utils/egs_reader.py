@@ -176,7 +176,7 @@ def main():
                 u_label.split('-')[-1] == 'babble':
             u_label_origin = '-'.join(u_label.split('-')[:-1])
             if u_label_origin in u2g_dict:
-                file_path = os.path.join(save_path,u2g_dict[u_label],u_label + '.npy')
+                file_path = os.path.join(save_path,u2g_dict[u_label_origin],u_label + '.npy')
                 np.save(file_path,mat[i])
         else:         
             if u_label in u2g_dict:

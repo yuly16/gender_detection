@@ -12,6 +12,11 @@ def mk_dataloaders(opt,path):
         mfcc_dataset = MFCC_dataset(os.path.join(path,"egs{}".format(loader_ids[i])))
         mfcc_dataloaders.append((i,DataLoader(dataset=mfcc_dataset, batch_size=opt['batch_size'], shuffle=True)))
     return mfcc_dataloaders
+
+def init_log():
+    #如果log存在就删掉
+    if os.path.exists('log/log.txt'):
+        os.system('rm log/log.txt')
 def update_log(epoch,n_job,acc,loss):
     log_path = os.path.join(os.getcwd(),'log')
     if not os.path.exists(log_path):

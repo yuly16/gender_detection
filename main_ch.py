@@ -19,6 +19,7 @@ def main(opt):
     mfcc_test_dataloader = DataLoader(dataset=mfcc_test_dataset, batch_size=opt['batch_size'], shuffle=True)
     optimizer = torch.optim.Adam(x_vector.parameters(), lr=1e-5)
     entropy_loss = nn.CrossEntropyLoss()
+    init_log()
     for epoch in range(opt['epoches']):
         n_job = 1
         print('training process:')

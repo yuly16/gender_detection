@@ -36,19 +36,22 @@ class X_vector(nn.Module):
     def forward(self, x):
 
         #frame level tdnn
-
+        x = x.transpose(1, 2).contiguous()
         x_shape=x.data.shape
         x=x.view(x_shape[0],1,x_shape[1],x_shape[2])
         x = self.tdnn1(x)
         x_shape=x.data.shape
+        # print(1,x.shape)
         x=x.view(x_shape[0],x_shape[1],x_shape[2])
         x = F.relu(self.bn1(x))
         x = x.transpose(1, 2).contiguous()
 
         x_shape=x.data.shape
+        # print(2,x.shape)
         x=x.view(x_shape[0],1,x_shape[1],x_shape[2])
         x = self.tdnn2(x)
         x_shape=x.data.shape
+        # print(3,x.shape)
         x=x.view(x_shape[0],x_shape[1],x_shape[2])
         x = F.relu(self.bn2(x))
         x = x.transpose(1, 2).contiguous()

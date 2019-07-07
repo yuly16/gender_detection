@@ -29,6 +29,7 @@ class MFCC_dataset(Dataset):  # 需要继承data.Dataset
         mfcc_file, gender = self.mfcc2gender[index]
         mfcc_np = np.load(mfcc_file)
         mfcc_shape = mfcc_np.shape
+
         if mfcc_shape[0] < 300:
             mfcc_np = np.pad(mfcc_np,((0,300-mfcc_shape[0]),(0,0)),'constant',constant_values = (0,0))
         else:

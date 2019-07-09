@@ -13,30 +13,30 @@ def main(opt):
     device = torch.device('cuda:0') if use_cuda else torch.device('cpu')
     x_vector = X_vector()
     x_vector = x_vector.to(device)
-    mfcc_dataset = MFCC_dataset('/mnt/workspace2/yuly/gender_data/train_ch')
-    mfcc_dataloader = DataLoader(dataset=mfcc_dataset, batch_size=opt['batch_size'], shuffle=True)
+    mfcc_dataloaders = mk_dataloaders(opt,'/mnt/workspace2/yuly/gender_data/train_ch')
     mfcc_test_dataset = MFCC_dataset('/mnt/workspace2/yuly/gender_data/test')
-    mfcc_test_dataloader = DataLoader(dataset=mfcc_test_dataset, batch_size=opt['batch_size'], shuffle=True)
-    optimizer = torch.optim.Adam(x_vector.parameters(), lr=1e-5)
+    mfcc_test_dataloader = DataLoader(dataset=mfcc_test_dataset, batch_size=1, shuffle=True)
+    optimizer = torch.optim.Adam(x_vector.parameters(), lr=1e-6)
     entropy_loss = nn.CrossEntropyLoss()
-    init_log()
     for epoch in range(opt['epoches']):
-        n_job = 1
-        print('training process:')
-        x_vector.train()
-        for mfcc,gender in tqdm(mfcc_dataloader):
-            #print(mfcc.shape)
-            mfcc = mfcc.to(device)
-            gender = gender.to(device)
-            gender = gender.squeeze(1)
-            gender_predict = x_vector(mfcc)
-            loss = entropy_loss(gender_predict, gender)
-            loss.backward()
-            torch.nn.utils.clip_grad_norm_(x_vector.parameters(),5)
-            optimizer.step()
-        acc = 0
-        loss = 0
-        x_vector.eval()
+        print('training procedure:')
+        for n_job,mfcc_dataloader in mfcc_dataloaders:
+            print("selecting dataloader...")
+            x_vector.train()
+            for mfcc,gender in tqdm(mfcc_dataloader):
+                #print(mfcc.shape)
+                mfcc = mfcc.to(device)
+                gender = gender.to(device)
+                gender = gender.squeeze(1)
+                gender_predict = x_vector(mfcc)
+                loss = entropy_loss(gender_predict, gender)
+                loss.backward()
+                torch.nn.utils.clip_grad_norm_(x_vector.parameters(),5)
+                optimizer.step()
+            acc = 0
+            loss = 0
+            x_vector.eval()
+        print('testing procedure:')
         with torch.no_grad():
             for mfcc,gender in tqdm(mfcc_test_dataloader):
                 mfcc = mfcc.to(device)
@@ -76,6 +76,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--batch_size', type=int, default=512)
     parser.add_argument('--epoches', type=int, default=40)
-    parser.add_argument('--n_dataloaders', type=int, default=1)
+
     opt = vars(parser.parse_args())
     main(opt)

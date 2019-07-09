@@ -28,12 +28,11 @@ class MFCC_dataset(Dataset):  # 需要继承data.Dataset
         # 这里需要注意的是，第一步：read one data，是一个data
         mfcc_file, gender = self.mfcc2gender[index]
         mfcc_np = np.load(mfcc_file)
-        mfcc_shape = mfcc_np.shape
-
-        if mfcc_shape[0] < 300:
-            mfcc_np = np.pad(mfcc_np,((0,300-mfcc_shape[0]),(0,0)),'constant',constant_values = (0,0))
-        else:
-            mfcc_np = mfcc_np[:300,:]
+        # mfcc_shape = mfcc_np.shape
+        #if mfcc_shape[0] < 300:
+        #    mfcc_np = np.pad(mfcc_np,((0,300-mfcc_shape[0]),(0,0)),'constant',constant_values = (0,0))
+        #else:
+        #    mfcc_np = mfcc_np[:300,:]
         return torch.from_numpy(mfcc_np).transpose(1,0), torch.Tensor([self.gender2id[gender]]).long()
     def __len__(self):
         # You should change 0 to the total size of your dataset.

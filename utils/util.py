@@ -5,11 +5,12 @@ from torch.utils.data import DataLoader
 import numpy as np
 import torch
 def mk_dataloaders(opt,path):
+    n_dataloaders = len(os.listdir(path))
     mfcc_dataloaders = []
-    loader_ids = [i+1 for i in range(opt['n_dataloaders'])]
+    loader_ids = [i for i in range(n_dataloaders)]
     random.shuffle(loader_ids)
-    for i in range(opt['n_dataloaders']):
-        mfcc_dataset = MFCC_dataset(os.path.join(path,"egs{}".format(loader_ids[i])))
+    for i in range(n_dataloaders):
+        mfcc_dataset = MFCC_dataset(os.path.join(path,os.listdir(path)[loader_ids[i]]))
         mfcc_dataloaders.append((i,DataLoader(dataset=mfcc_dataset, batch_size=opt['batch_size'], shuffle=True)))
     return mfcc_dataloaders
 
@@ -39,3 +40,6 @@ def save_model(epoch,n_job,acc,model):
 def load_model():
     pass
 
+
+  
+    

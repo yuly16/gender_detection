@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import kaldi_io
 import numpy as np
-
+import math
 # 由mfcc,vad的ark转换为mfcc,vad的npy
 def ark2npy(output_dir, mfcc_dir, dataset_dir, vad_dir, utt_eq_spk=True):
 	# utt_eq_spk这个参数用于表示utt是否和spk相同。在中文训练集中，utt=spk;在中文测试集中，utt不等于spk
@@ -39,15 +39,37 @@ def ark2npy(output_dir, mfcc_dir, dataset_dir, vad_dir, utt_eq_spk=True):
 				# print(key,mat.shape)
 				np_file = os.path.join(np_path, "{}.npy".format(utt))
 				np.save(np_file, mat)
-def remove_vad(dataset_dir, vad_dir,output_dir):
+def postprocessing(dataset_dir, vad_dir,output_dir):
+	# the function is aimed at:
+	# 1. remove the silence of mfcc based on VAD
+	# 2. cluster mfcc in similar lengths and clip them into the same length
+
+	#open utt2frame_num
 	for gender in ['m','f']:
 		dataset_path = os.path.join(dataset_dir,gender)
 		vad_path = os.path.join(vad_dir,gender)
-		output_path = os.path.join(output_dir,gender)
 		for item in os.listdir(dataset_path):
 			dataset_file = os.path.join(dataset_path,item)
 			vad_file = os.path.join(vad_path,item)
-			output_file = os.path.join(output_path,item)
 			mfcc = np.load(dataset_file)
 			vad = np.load(vad_file)
-			np.save(output_file,mfcc[vad == 1])
+			# remove vad
+			mfcc = mfcc[vad == 1]
+			#cluster
+			length_unit = 50
+			length_category = math.floor(mfcc.shape[0] / length_unit)
+			if length_category > 0:
+				mfcc = mfcc[:length_category*length_unit]
+				output_path = os.path.join(output_dir, str(length_category), gender)
+				if not os.path.exists(os.path.join(output_dir, str(length_category))):
+					os.mkdir(os.path.join(output_dir, str(length_category)))
+				if not os.path.exists(output_path):
+					os.mkdir(output_path)
+				output_file = os.path.join(output_path,item)
+				np.save(output_file,mfcc)
+
+def ark2egs(data_dir,egs_dir):
+	cmd = "sid/nnet3/xvector/get_egs.sh --cmd \"run.pl\" --nj 8 --stage 0 --frames-per-iter 1000000000 --frames-per-iter-diagnostic 500000 --min-frames-per-chunk 10 --max-frames-per-chunk 200 --num-diagnostic-archives 3 --num-repeats 40 %s %s"%(data_dir,egs_dir)
+	os.system(cmd)
+
+  

@@ -1,7 +1,7 @@
 py文件说明
 ==============
->main_eg.py: 英文数据集训练，中文测试集测试<br>
->main_ch.py: 中文数据集训练，中文数据集测试<br>
+>main_multi.py: 多数据集训练，中文测试集测试<br>
+>main_single.py: 单数据集训练，中文数据集测试<br>
 >models:
 >>models.py: 模型代码<br>
 
@@ -69,5 +69,6 @@ py文件说明
 ## 3.由mfcc,vad到npy
 调用ark2npy(output_dir,mfcc_dir,dataset_dir,vad_dir)函数即可。
 
-## 4.对mfcc进行vad消除
-调用remove_vad函数。
+## 4.后处理
+后处理包括两部分:除去静音；多label聚类。
+调用postprocessing函数。

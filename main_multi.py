@@ -16,7 +16,7 @@ def main(opt):
     mfcc_dataloaders = mk_dataloaders(opt,'/mnt/workspace2/yuly/gender_data/train_ch')
     mfcc_test_dataset = MFCC_dataset('/mnt/workspace2/yuly/gender_data/test')
     mfcc_test_dataloader = DataLoader(dataset=mfcc_test_dataset, batch_size=1, shuffle=True)
-    optimizer = torch.optim.Adam(x_vector.parameters(), lr=1e-6)
+    optimizer = torch.optim.Adam(x_vector.parameters(), lr=1e-5)
     entropy_loss = nn.CrossEntropyLoss()
     for epoch in range(opt['epoches']):
         print('training procedure:')

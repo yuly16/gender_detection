@@ -10,7 +10,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.nn import Parameter
 from torch.autograd import Variable
-from torch.nn.functional import sigmoid
+from torch.nn.functional import softmax
 
 class X_vector(nn.Module):
     def __init__(self):
@@ -25,7 +25,6 @@ class X_vector(nn.Module):
         self.tdnn3 = nn.Conv2d(1, 512, (7,512))
         self.bn3 = nn.BatchNorm1d(512)
 
-        # self.flat = nn.Conv1d(512,1,6)
         self.fc1= nn.Sequential(nn.Linear(1024, 1024),nn.BatchNorm1d(1024),nn.ReLU())
         self.fc2= nn.Sequential(nn.Linear(1024, 512),nn.BatchNorm1d(512),nn.ReLU())
         self.fc3= nn.Linear(512, 2)
@@ -73,7 +72,7 @@ class X_vector(nn.Module):
 
         x = self.fc1(x)
         x = self.fc2(x)
-        x = sigmoid(self.fc3(x))
+        x = softmax(self.fc3(x))
 
 
         return x
